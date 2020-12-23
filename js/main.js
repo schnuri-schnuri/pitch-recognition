@@ -21,6 +21,10 @@ var canvas = document.getElementById("canvas");
 console.log(canvas);
 var canvasCtx = canvas.getContext("2d");
 
+// var canvas2 = document.getElementById("canvas2");
+// console.log(canvas2);
+// var canvas2Ctx = canvas2.getContext("2d");
+
 function init() {
   buildPiano(PIANO_ID, 50, "E", 1)
   buildOctave(OCTAVE_ID, "C")
@@ -34,7 +38,7 @@ function init() {
   analyser.minDecibels = -90;
   analyser.maxDecibels = -10;
   analyser.smoothingTimeConstant = 0.85;
-  analyser.fftSize = 32768;
+  analyser.fftSize = 2048; //todo changed from 32768;
   binWidth = audioCtx.sampleRate / analyser.frequencyBinCount;
 
 
@@ -47,9 +51,10 @@ function init() {
     .then(
       function (stream) {
         source = audioCtx.createMediaStreamSource(stream);
-        source.connect(lowPassFilterNode);
-        lowPassFilterNode.connect(highPassFilterNode);
-        highPassFilterNode.connect(analyser);
+        source.connect(analyser)
+        // source.connect(lowPassFilterNode); todo because we need it for fft but not for ac
+        // lowPassFilterNode.connect(highPassFilterNode);
+        // highPassFilterNode.connect(analyser);
 
         getFFTData()
       });
@@ -77,64 +82,105 @@ function getFFTData() {
 
 function performAC() {
   const arrayLen = analyser.frequencyBinCount;
-  const W = arrayLen/2;
+  const W = arrayLen;
   const t = 0;
 
-  const dataArray = new Uint8Array(arrayLen);
-  analyser.getByteTimeDomainData(dataArray);
+  const dataArray = new Float32Array(arrayLen);
+  analyser.getFloatTimeDomainData(dataArray);
 
-  let r = new Uint16Array(W).fill(0);
-  let m = new Uint16Array(W).fill(0);
+  let r = new Float32Array(W).fill(0);
+  let m = new Float32Array(W).fill(0);
+  let n = new Float32Array(W).fill(0);
 
   for(let tau = 0; tau < W; tau++){
     for(let j = t; j < t + W - tau; j++){
       r[tau] += dataArray[j] * dataArray[j+tau];
       m[tau] += Math.pow(dataArray[j],2) + Math.pow(dataArray[j+tau],2);
     }
+      n[tau] = (2 * r[tau]) / m[tau];
   }
 
-  let n = r.map((v,i) => 2 * v / m[i]);
+  //todo because i'm dumb i'll try to do it a second time
 
-  let max = Math.max(...n);
-  let maxIndex = n.indexOf(max);
+  // let n2 = new Float32Array(W).fill(0);
+  //
+  // for(let tau = 0; tau < W; tau++){
+  //   for(let j = t; j < t + W - tau; j++){
+  //     r[tau] += n[j] * n[j+tau];
+  //     m[tau] += Math.pow(n[j],2) + Math.pow(n[j+tau],2);
+  //   }
+  //   n2[tau] = (2 * r[tau]) / m[tau];
+  // }
 
-  console.log(max, maxIndex);
+
+  // let max = Math.max(...n);
+  // let maxIndex = n.indexOf(max);
+  //
+  // let min = Math.min(...n);
+  // let minIndex = n.indexOf(min);
+  //
+  // console.log(max, maxIndex, min, minIndex, n[1], n[2], n[3], n[4], n[5], n[6], n[100], n[1000]);
 
   //todo
-  const HEIGHT = 200;
-  const WIDTH = 1200;
+  const HEIGHT = 400;
+  const WIDTH = 1800;
 
-    //drawVisual = requestAnimationFrame(draw);
+  //drawVisual = requestAnimationFrame(draw);
 
-    //analyser.getByteTimeDomainData(dataArray);
+  //analyser.getByteTimeDomainData(dataArray);
 
-    canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-    canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+  canvasCtx.fillStyle = 'rgb(200, 200, 200)';
+  canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
-    canvasCtx.lineWidth = 2;
-    canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+  canvasCtx.lineWidth = 2;
+  canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
 
-    canvasCtx.beginPath();
+  canvasCtx.beginPath();
 
-    var sliceWidth = WIDTH * 1.0 / n.length;
-    var x = 0;
+  const LENGTH = WIDTH; //todo
 
-    for(var i = 0; i < n.length; i++) {
+  var sliceWidth = WIDTH * 1.0 / LENGTH; // todo old: n.length;
 
-      var v = n[i] / 128.0;
-      var y = v * HEIGHT/2;
 
-      if(i === 0) {
-        canvasCtx.moveTo(x, y);
-      } else {
-        canvasCtx.lineTo(x, y);
-      }
+  console.log(sliceWidth)
 
-      x += sliceWidth;
+  for(let i = 0, x = 0; i < LENGTH; i++, x+=sliceWidth) { //todo
+
+    const y = n[i];
+    //var y = v * HEIGHT/4;
+
+    if(i === 0) {
+      canvasCtx.moveTo(x, (HEIGHT /2) * (1 - y));
+    } else {
+      canvasCtx.lineTo(x, (HEIGHT /2) * (1 - y));
     }
+  }
 
-    canvasCtx.lineTo(canvas.width, canvas.height/2);
-    canvasCtx.stroke();
+  canvasCtx.lineTo(canvas.width, canvas.height/2);
+  canvasCtx.stroke();
+
+  // canvas2Ctx.fillStyle = 'rgb(200, 200, 200)';
+  // canvas2Ctx.fillRect(0, 0, WIDTH, HEIGHT);
+  //
+  // canvas2Ctx.lineWidth = 2;
+  // canvas2Ctx.strokeStyle = 'rgb(0, 0, 0)';
+  //
+  // canvas2Ctx.beginPath();
+  //
+  // for(let i = 0, x = 0; i < LENGTH; i++, x+= sliceWidth) { //todo
+  //
+  //   const y = n2[i];
+  //   //var y = v * HEIGHT/4;
+  //
+  //   if(i === 0) {
+  //     canvas2Ctx.moveTo(x, (HEIGHT /2) * (1 - y));
+  //   } else {
+  //     canvas2Ctx.lineTo(x, (HEIGHT /2) * (1 - y));
+  //   }
+  // }
+  //
+  // canvas2Ctx.lineTo(canvas.width, canvas.height/2);
+  // canvas2Ctx.stroke();
 
 }
 

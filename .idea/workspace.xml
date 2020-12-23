@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6ccbdc4e-908b-442c-a2db-218872f66eea" name="Default Changelist" comment="" />
+    <list default="true" id="6ccbdc4e-908b-442c-a2db-218872f66eea" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/main.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectId" id="1lFmsIIC4r26FlPtFgrg6sLCRmR" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -32,18 +40,38 @@
       <workItem from="1607247962189" duration="5537000" />
       <workItem from="1607288720052" duration="250000" />
       <workItem from="1608413565762" duration="16000" />
-      <workItem from="1608545623265" duration="4146000" />
+      <workItem from="1608545623265" duration="4311000" />
+      <workItem from="1608647513501" duration="718000" />
+      <workItem from="1608656068483" duration="992000" />
+      <workItem from="1608659371960" duration="792000" />
+      <workItem from="1608719074926" duration="3339000" />
     </task>
+    <task id="LOCAL-00001" summary="init">
+      <created>1608564022808</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1608564022808</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="init" />
+    <option name="LAST_COMMIT_MESSAGE" value="init" />
   </component>
   <component name="WindowStateProjectService">
     <state x="458" y="215" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1607201442418">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="458" y="215" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/-2560.-645.2560.1417/0.23.1440.877@0.23.1440.877" timestamp="1607201442418" />
+    <state x="190" y="316" key="CommitChangelistDialog2" timestamp="1608564022344">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="190" y="316" key="CommitChangelistDialog2/0.23.2560.1417@0.23.2560.1417" timestamp="1608564022344" />
     <state width="1419" height="231" key="GridCell.Tab.0.bottom" timestamp="1607204175602">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
