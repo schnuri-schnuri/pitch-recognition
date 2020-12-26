@@ -1,15 +1,25 @@
 "use strict";
-import * as Tone from 'tone';
+import * as Tone from 'tone'; //todo remove
 
 const NOTES = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"];
 const WHITE_KEY_CLASS_NAME = "white-key";
 const BLACK_KEY_CLASS_NAME = "black-key";
 const ACTIVE_KEY_CLASS_NAME = "active";
-const PIANO_ID = "piano";
-const OCTAVE_ID = "octave";
-let currentNote = "E1";
+const FFT_CONTAINER_ID = "fft-container";
+const AC_CONTAINER_ID = "ac-container"
+const PIANO_CLASS = "piano";
+const OCTAVE_CLASS = "octave";
+const NOTE_CONTAINER_CLASS = "note-container";
 
-let noteContainer;
+let currentNote = {}
+currentNote[FFT_CONTAINER_ID] = "E1";
+currentNote[AC_CONTAINER_ID] = "E1";
+
+
+console.log(currentNote)
+
+let fftNoteContainer;
+let acNoteContainer;
 let audioCtx;
 let source;
 let analyser;
@@ -26,13 +36,15 @@ var canvasCtx = canvas.getContext("2d");
 // var canvas2Ctx = canvas2.getContext("2d");
 
 function init() {
-  buildPiano(PIANO_ID, 50, "E", 1)
-  buildOctave(OCTAVE_ID, "C")
-  document.getElementById("start").remove();
-  noteContainer = document.getElementById("note-container");
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  buildPiano(FFT_CONTAINER_ID, PIANO_CLASS, 50, "E", 1);
+  buildOctave(FFT_CONTAINER_ID, OCTAVE_CLASS, "C");
+  buildPiano(AC_CONTAINER_ID, PIANO_CLASS, 50, "E", 1);
+  buildOctave(AC_CONTAINER_ID, OCTAVE_CLASS, "C");
 
-  console.log(audioCtx.sampleRate);
+  document.getElementById("start").remove();
+  fftNoteContainer = document.querySelector("#" + FFT_CONTAINER_ID + " > ." + NOTE_CONTAINER_CLASS);
+  acNoteContainer = document.querySelector("#" + AC_CONTAINER_ID + " > ." + NOTE_CONTAINER_CLASS); //todo
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
   analyser = audioCtx.createAnalyser();
   analyser.minDecibels = -90;
@@ -51,43 +63,39 @@ function init() {
     .then(
       function (stream) {
         source = audioCtx.createMediaStreamSource(stream);
-        source.connect(analyser)
-        // source.connect(lowPassFilterNode); todo because we need it for fft but not for ac
-        // lowPassFilterNode.connect(highPassFilterNode);
-        // highPassFilterNode.connect(analyser);
+        //source.connect(analyser)
+        source.connect(lowPassFilterNode); //todo because we need it for fft but not for ac
+        lowPassFilterNode.connect(highPassFilterNode);
+        highPassFilterNode.connect(analyser);
 
-        getFFTData()
+        analysePitch()
       });
 }
 
-function getFFTData() {
+function analysePitch() {
+  performFFT();
+  performAC();
+  requestAnimationFrame(analysePitch);
+}
 
+function performFFT(){
   const dataArray = new Uint8Array(analyser.frequencyBinCount);
   analyser.getByteFrequencyData(dataArray);
 
   const maxVal = Math.max(...dataArray)
 
   const frequency = dataArray.indexOf(maxVal) * binWidth / 4;
-  const newNote = Tone.Frequency(frequency).toNote();
-
-  if (newNote && newNote !== "undefined-Infinity") {
-    noteContainer.innerHTML = frequency.toFixed(0) + " Hz  Note: " + newNote;
-    changeKeysFromTo(newNote);
-  }
-
-  performAC();
-
-  requestAnimationFrame(getFFTData);
+  changeNoteInContainer(FFT_CONTAINER_ID, fftNoteContainer, frequency);
 }
 
 function performAC() {
   const arrayLen = analyser.frequencyBinCount;
   const W = arrayLen;
   const t = 0;
+  const k = 0.95;
 
   const dataArray = new Float32Array(arrayLen);
   analyser.getFloatTimeDomainData(dataArray);
-
   let r = new Float32Array(W).fill(0);
   let m = new Float32Array(W).fill(0);
   let n = new Float32Array(W).fill(0);
@@ -100,101 +108,91 @@ function performAC() {
       n[tau] = (2 * r[tau]) / m[tau];
   }
 
-  //todo because i'm dumb i'll try to do it a second time
+  const idx = getBestValueFromAC(n, k);
+  const f = audioCtx.sampleRate/idx;
+  changeNoteInContainer(AC_CONTAINER_ID, acNoteContainer, f);
 
-  // let n2 = new Float32Array(W).fill(0);
-  //
-  // for(let tau = 0; tau < W; tau++){
-  //   for(let j = t; j < t + W - tau; j++){
-  //     r[tau] += n[j] * n[j+tau];
-  //     m[tau] += Math.pow(n[j],2) + Math.pow(n[j+tau],2);
-  //   }
-  //   n2[tau] = (2 * r[tau]) / m[tau];
-  // }
+  plotArray(n);
+}
 
+function changeNoteInContainer(containerId, noteContainer, frequency){
+  const note = Tone.Frequency(frequency).toNote(); //todo change to native
+  if (note && note !== "undefined-Infinity" && note !== "undefinedNaN") {
+    noteContainer.innerHTML = frequency.toFixed(0) + " Hz  Note: " + note;
+    if(currentNote[containerId] !== note){
+      changeKeysFromTo(containerId, note);
+    }
 
-  // let max = Math.max(...n);
-  // let maxIndex = n.indexOf(max);
-  //
-  // let min = Math.min(...n);
-  // let minIndex = n.indexOf(min);
-  //
-  // console.log(max, maxIndex, min, minIndex, n[1], n[2], n[3], n[4], n[5], n[6], n[100], n[1000]);
+  }
+}
 
-  //todo
+function plotArray(n){
   const HEIGHT = 400;
-  const WIDTH = 1800;
+  const WIDTH = 1024;
+  const LENGTH = WIDTH;
+  const sliceWidth = 1; //WIDTH * 1.0 / LENGTH;
 
-  //drawVisual = requestAnimationFrame(draw);
-
-  //analyser.getByteTimeDomainData(dataArray);
-
-  canvasCtx.fillStyle = 'rgb(200, 200, 200)';
+  canvasCtx.fillStyle = 'rgb(255, 255, 255)';
   canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
   canvasCtx.lineWidth = 2;
   canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
 
   canvasCtx.beginPath();
-
-  const LENGTH = WIDTH; //todo
-
-  var sliceWidth = WIDTH * 1.0 / LENGTH; // todo old: n.length;
-
-
-  console.log(sliceWidth)
-
-  for(let i = 0, x = 0; i < LENGTH; i++, x+=sliceWidth) { //todo
-
-    const y = n[i];
-    //var y = v * HEIGHT/4;
-
-    if(i === 0) {
-      canvasCtx.moveTo(x, (HEIGHT /2) * (1 - y));
-    } else {
-      canvasCtx.lineTo(x, (HEIGHT /2) * (1 - y));
-    }
+  canvasCtx.moveTo(0, (HEIGHT /2) * (1 - n[0]))
+  for(let i = 1, x = sliceWidth; i < LENGTH; i++, x+=sliceWidth) {
+    canvasCtx.lineTo(x, (HEIGHT /2) * (1 - n[i]));
   }
-
-  canvasCtx.lineTo(canvas.width, canvas.height/2);
   canvasCtx.stroke();
-
-  // canvas2Ctx.fillStyle = 'rgb(200, 200, 200)';
-  // canvas2Ctx.fillRect(0, 0, WIDTH, HEIGHT);
-  //
-  // canvas2Ctx.lineWidth = 2;
-  // canvas2Ctx.strokeStyle = 'rgb(0, 0, 0)';
-  //
-  // canvas2Ctx.beginPath();
-  //
-  // for(let i = 0, x = 0; i < LENGTH; i++, x+= sliceWidth) { //todo
-  //
-  //   const y = n2[i];
-  //   //var y = v * HEIGHT/4;
-  //
-  //   if(i === 0) {
-  //     canvas2Ctx.moveTo(x, (HEIGHT /2) * (1 - y));
-  //   } else {
-  //     canvas2Ctx.lineTo(x, (HEIGHT /2) * (1 - y));
-  //   }
-  // }
-  //
-  // canvas2Ctx.lineTo(canvas.width, canvas.height/2);
-  // canvas2Ctx.stroke();
-
 }
 
 
+function getBestValueFromAC(n, k){ //n: array, k threshold constant
+  let maxIndexes = [];
+  let absoluteMax = 0
+  let currentMax = 0;
+  let absoluteMaxIndex = 1;
+  let currentMaxIndex = 1;
+  for(let i = 1; i < n.length; i++){ //we ignore the first value
+    if(n[i] < 0) continue;
+
+    if(n[i-1] < 0){
+      if (currentMax > 0){
+        maxIndexes.push(currentMaxIndex)
+      }
+      currentMax = 0;
+      currentMaxIndex = 1;
+    }
+
+    if(n[i] > currentMax){
+      currentMax = n[i];
+      currentMaxIndex = i;
+      if(n[i] > absoluteMax){
+        absoluteMax = n[i];
+        absoluteMaxIndex = i;
+      }
+    }
+  }
+
+  const threshold = k * absoluteMax;
+
+  for(let i = 1; i < maxIndexes.length; i++){
+    if(n[maxIndexes[i]] > threshold){
+      return maxIndexes[i];
+    }
+  }
+
+  return -1;
+}
 
 
-function changeKeysFromTo(newNote) {
-
-  const oldKey = document.getElementById(PIANO_ID + convertNoteStringToId(currentNote));
-  const newKey = document.getElementById(PIANO_ID + convertNoteStringToId(newNote));
+function changeKeysFromTo(containerId, newNote) {
+  const oldNote = currentNote[containerId]
+  const oldKey = document.getElementById(containerId + convertNoteStringToId(oldNote));
+  const newKey = document.getElementById(containerId + convertNoteStringToId(newNote));
   const oldOctaveKey = document
-    .getElementById(OCTAVE_ID + convertNoteStringToId(currentNote).replace(/[0-9]/g, ""));
+    .getElementById(containerId + convertNoteStringToId(oldNote).replace(/[0-9]/g, ""));
   const newOctaveKey = document
-    .getElementById(OCTAVE_ID + convertNoteStringToId(newNote).replace(/[0-9]/g, ""));
+    .getElementById(containerId + convertNoteStringToId(newNote).replace(/[0-9]/g, ""));
   if (!newKey || !oldKey || !oldOctaveKey || !newOctaveKey) {
     return;
   }
@@ -202,7 +200,8 @@ function changeKeysFromTo(newNote) {
   newKey.classList.add(ACTIVE_KEY_CLASS_NAME);
   oldOctaveKey.classList.remove(ACTIVE_KEY_CLASS_NAME);
   newOctaveKey.classList.add(ACTIVE_KEY_CLASS_NAME);
-  currentNote = newNote;
+
+  currentNote[containerId] = newNote;
 }
 
 
@@ -214,10 +213,11 @@ function getIndices(arr, slice) {
   return slice.map(element => arr.indexOf(element));
 }
 
-function buildPiano(containerId, numberOfKeys, startNote, startOctave, numbers = true) {
+function buildPiano(containerId, pianoClass, numberOfKeys, startNote, startOctave, numbers = true) {
   let noteIndex = NOTES.indexOf(startNote);
+  const selector = "#" + containerId + " > ." + pianoClass;
 
-  const container = document.getElementById(containerId);
+  const container = document.querySelector(selector);
   for (let i = noteIndex; i < numberOfKeys + noteIndex; i++) {
     let element = document.createElement("span");
     element.id = containerId + convertNoteStringToId(NOTES[i % 12] + (numbers ? startOctave : ""));
@@ -244,10 +244,34 @@ function isBlackKey(noteString) {
   return noteString.includes("#");
 }
 
-function buildOctave(containerId, startNote) {
+function buildOctave(container, className, startNote) {
   const numberOfKeys = 13;
-  buildPiano(containerId, numberOfKeys, startNote, 0, false);
+  buildPiano(container, className, numberOfKeys, startNote, 0, false);
 }
+
+class FixedLengthQueue{
+  constructor(length){
+    this.length = length;
+  }
+
+  q = [];
+
+  queue(elem){
+    this.q.push(elem);
+    if(this.q.length > this.length){
+      this.q.shift();
+    }
+  }
+
+  unQueue(){
+    return this.q.shift();
+  }
+
+}
+
+// class AutoCorrelator(){
+//
+// }
 
 
 document.getElementById("start").addEventListener("click", init)

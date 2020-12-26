@@ -44,7 +44,9 @@
       <workItem from="1608647513501" duration="718000" />
       <workItem from="1608656068483" duration="992000" />
       <workItem from="1608659371960" duration="792000" />
-      <workItem from="1608719074926" duration="3339000" />
+      <workItem from="1608719074926" duration="11477000" />
+      <workItem from="1608757492254" duration="19000" />
+      <workItem from="1608973887759" duration="537000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1608564022808</created>
@@ -53,7 +55,14 @@
       <option name="project" value="LOCAL" />
       <updated>1608564022808</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="working ac (incl some ideas)">
+      <created>1608723099405</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1608723099405</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -61,17 +70,18 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
-    <option name="LAST_COMMIT_MESSAGE" value="init" />
+    <MESSAGE value="working ac (incl some ideas)" />
+    <option name="LAST_COMMIT_MESSAGE" value="working ac (incl some ideas)" />
   </component>
   <component name="WindowStateProjectService">
     <state x="458" y="215" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1607201442418">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="458" y="215" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/-2560.-645.2560.1417/0.23.1440.877@0.23.1440.877" timestamp="1607201442418" />
-    <state x="190" y="316" key="CommitChangelistDialog2" timestamp="1608564022344">
+    <state x="190" y="316" key="CommitChangelistDialog2" timestamp="1608723098851">
       <screen x="0" y="23" width="2560" height="1417" />
     </state>
-    <state x="190" y="316" key="CommitChangelistDialog2/0.23.2560.1417@0.23.2560.1417" timestamp="1608564022344" />
+    <state x="190" y="316" key="CommitChangelistDialog2/0.23.2560.1417@0.23.2560.1417" timestamp="1608723098851" />
     <state width="1419" height="231" key="GridCell.Tab.0.bottom" timestamp="1607204175602">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
@@ -88,5 +98,9 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state width="1419" height="231" key="GridCell.Tab.0.right/-2560.-645.2560.1417/0.23.1440.877@0.23.1440.877" timestamp="1607204175602" />
+    <state x="945" y="348" width="670" height="676" key="search.everywhere.popup" timestamp="1608725818855">
+      <screen x="0" y="23" width="2560" height="1417" />
+    </state>
+    <state x="945" y="348" width="670" height="676" key="search.everywhere.popup/0.23.2560.1417@0.23.2560.1417" timestamp="1608725818855" />
   </component>
 </project>
