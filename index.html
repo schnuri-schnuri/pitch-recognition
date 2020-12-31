@@ -2,8 +2,28 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Vocal Pitch Trainer</title>
+  <title>Pitch Recognition</title>
   <style>
+    div, canvas {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+
+      /*width: 800px;*/
+    }
+
+    #fft-container {
+      display: none;
+      margin: 20px auto;
+      background-color: aliceblue;
+    }
+
+    #ac-container {
+      display: none;
+      margin: 20px auto;
+      background-color: aliceblue;
+    }
+
     .white-key{
       border: 1px solid black;
     }
@@ -16,34 +36,46 @@
       background-color: blue;
       color: yellow;
     }
-    #piano{
+    .piano{
       width: 100%;
+    }
+
+    .button{
+      border: 3px solid black;
+      box-shadow: gray;
+      margin: 5px;
+      padding: 5px;
+      max-width: 200px;
+
     }
   </style>
 </head>
 <body>
 
-<div id="start">START</div>
-
+<div id="start-fft" class="button">Start Fast Fourier Transformation</div>
 <div id="fft-container">
-<div class="note-container"></div>
-<div class="piano"></div>
-<div class="octave"></div>
+<!--  <h2>Fast Fourier Transformation</h2>-->
+  <div class="note-container"></div>
+  <div class="piano"></div>
+  <div class="octave"></div>
+  <div id="stop-fft" class="button">Stop Fast Fourier Transformation</div>
 </div>
 
+<div id="start-ac" class="button">Start Autocorrelation</div>
 <div id="ac-container">
-<div class="note-container"></div>
-<div class="piano"></div>
-<div class="octave"></div>
+<!--  <h2>Autocorrelation</h2>-->
+  <div class="note-container"></div>
+  <div class="piano"></div>
+  <div class="octave"></div>
+  <canvas id="canvas"></canvas>
+  <div id="stop-ac" class="button">Stop Autocorrelation</div>
 </div>
 
-<div id="filterbank-container">
-<div class="note-container"></div>
-<div class="piano"></div>
-<div class="octave"></div>
-</div>
-
-<canvas id="canvas"></canvas>
+<!--<div id="filterbank-container">-->
+<!--<div class="note-container"></div>-->
+<!--<div class="piano"></div>-->
+<!--<div class="octave"></div>-->
+<!--</div>-->
 
 <script src="/js/main.js"></script>
 </body>

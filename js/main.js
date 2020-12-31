@@ -1,12 +1,14 @@
 "use strict";
 import * as Tone from 'tone'; //todo remove
-
 const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
 let audioCtx;
+let started = false;
+let fftStarted = false;
+let acStarted = false;
 
 function init() {
-  document.getElementById("start").remove();
+  started = true;
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   navigator.mediaDevices.getUserMedia({audio: true})
     .then(
@@ -14,9 +16,23 @@ function init() {
         const fft = new FFTAnalyser(audioCtx,stream);
         const ac = new AutoCorrelator(audioCtx,stream);
 
+        if(fftStarted) {
+          console.log("show fft")
+          document.getElementById("fft-container").style.display = "block";
+        }
+
+        if(acStarted){
+          console.log("show ac")
+          document.getElementById("ac-container").style.display = "block";
+        }
+
         function analysePitch() {
-          fft.perform();
-          ac.perform();
+          if(fftStarted){
+            fft.perform();
+          }
+          if(acStarted){
+            ac.perform();
+          }
           requestAnimationFrame(analysePitch);
         }
 
@@ -49,11 +65,11 @@ class FixedLengthQueue{
 
 }
 
-class PitchAnalyser{
-  static hannWindow(arr){
-    return arr.map((v,i) => 0.5 * v *( 1 - Math.cos(2 * Math.PI * i / arr.length)));
-  }
-}
+// class PitchAnalyser{
+//   static hannWindow(arr){
+//     return arr.map((v,i) => 0.5 * v *( 1 - Math.cos(2 * Math.PI * i / arr.length)));
+//   }
+// }
 
 class FFTAnalyser {
   constructor(audioCtx, stream) {
@@ -84,25 +100,25 @@ class FFTAnalyser {
   }
 }
 
-class FilterBankAnalyser {
-  constructor() {
-    this.FILTERBANK_CONTAINER_ID = "filterbank-container";
-
-    this.source = audioCtx.createMediaStreamSource(stream);
-    // this.analyser = audioCtx.createAnalyser();
-    // this.analyser.minDecibels = -90;
-    // this.analyser.maxDecibels = -10;
-    // this.analyser.smoothingTimeConstant = 0.85;
-    // this.analyser.fftSize = 32768;
-    this.binWidth = audioCtx.sampleRate / this.analyser.frequencyBinCount;
-    this.source.connect(this.analyser);
-
-    this.noteDisplay = new NoteDisplay(this.FILTERBANK_CONTAINER_ID);
-
-   //  for()
-   // //
-  }
-}
+// class FilterBankAnalyser {
+//   constructor() {
+//     this.FILTERBANK_CONTAINER_ID = "filterbank-container";
+//
+//     this.source = audioCtx.createMediaStreamSource(stream);
+//     // this.analyser = audioCtx.createAnalyser();
+//     // this.analyser.minDecibels = -90;
+//     // this.analyser.maxDecibels = -10;
+//     // this.analyser.smoothingTimeConstant = 0.85;
+//     // this.analyser.fftSize = 32768;
+//     this.binWidth = audioCtx.sampleRate / this.analyser.frequencyBinCount;
+//     this.source.connect(this.analyser);
+//
+//     this.noteDisplay = new NoteDisplay(this.FILTERBANK_CONTAINER_ID);
+//
+//    //  for()
+//    // //
+//   }
+// }
 
 class AutoCorrelator {
   constructor(audioCtx, stream) {
@@ -160,7 +176,7 @@ class AutoCorrelator {
     let currentMaxIndex = 1;
 
     let i;
-    for(i=0; n[i]>0; i++);
+    for(i=0; n[i]>0; i++){}
     for(;i < n.length; i++){ //we ignore the first value
       if(n[i] < 0) continue;
 
@@ -213,7 +229,7 @@ class NoteDisplay{
     this.containerId = containerId;
     this.noteContainer = document.querySelector("#" + containerId + " > ." + this.NOTE_CONTAINER_CLASS);
     this.currentNote = this.STARTNOTE + this.STARTOCTAVE;
-    console.log(this.currentNote)
+    //console.log(this.currentNote)
 
     this.buildPiano(this.PIANO_CLASS,this.KEYBOARD_LENGTH, this.STARTNOTE, this.STARTOCTAVE);
     this.buildOctave(this.OCTAVE_CLASS, 13, "C");
@@ -319,7 +335,7 @@ class Canvas{
   }
 
   plotCorrelationAndMax(n, idx){
-    this.canvasCtx.fillStyle = 'rgb(255, 255, 255)';
+    this.canvasCtx.fillStyle = 'aliceblue';
     this.canvasCtx.fillRect(0, 0, this.WIDTH, this.HEIGHT);
     this.canvasCtx.lineWidth = 2;
     this.canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
@@ -333,7 +349,7 @@ class Canvas{
 
     this.canvasCtx.strokeStyle = 'rgb(255, 0, 0)';
     this.canvasCtx.beginPath();
-    console.log(idx*this.sliceWidth);
+    //console.log(idx*this.sliceWidth);
     this.canvasCtx.moveTo(idx*this.sliceWidth, 0);
     this.canvasCtx.lineTo(idx*this.sliceWidth, this.HEIGHT);
     this.canvasCtx.stroke();
@@ -341,5 +357,55 @@ class Canvas{
 
 }
 
-document.getElementById("start").addEventListener("click", init)
+document.getElementById("start-fft").addEventListener("click", ()=>{
+  fftStarted = true;
+  if(!started){
+    console.log("init");
+    init();
+  } else {
+    document.getElementById("fft-container").style.display = "block";
+  }
+  document.getElementById("start-fft").hidden = true;
+  document.getElementById("stop-fft").hidden = false;
+});
+
+document.getElementById("stop-fft").addEventListener("click", ()=>{
+  fftStarted = false;
+  if(started){
+    document.getElementById("fft-container").style.display = "none";
+    if(!acStarted){
+      //started = false;
+    }
+  }
+  document.getElementById("start-fft").hidden = false;
+  document.getElementById("stop-fft").hidden = true;
+});
+
+
+document.getElementById("start-ac").addEventListener("click", ()=>{
+  acStarted = true;
+  if(!started){
+    console.log("init");
+    init();
+  } else {
+    document.getElementById("ac-container").style.display = "block";
+  }
+  document.getElementById("start-ac").hidden = true;
+  document.getElementById("stop-ac").hidden = false;
+
+});
+
+document.getElementById("stop-ac").addEventListener("click", ()=>{
+  acStarted = false;
+  if(started){
+    document.getElementById("ac-container").style.display = "none";
+    if(!fftStarted){
+      //started = false;
+    }
+  }
+  document.getElementById("start-ac").hidden = false;
+  document.getElementById("stop-ac").hidden = true;
+});
+
+
 console.log("loaded");
