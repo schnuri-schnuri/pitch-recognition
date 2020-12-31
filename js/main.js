@@ -176,8 +176,8 @@ class AutoCorrelator {
     let currentMaxIndex = 1;
 
     let i;
-    for(i=0; n[i]>0; i++){}
-    for(;i < n.length; i++){ //we ignore the first value
+    for(i=0; n[i]>0; i++){} //we ignore the values before we reach 0
+    for(;i < n.length; i++){
       if(n[i] < 0) continue;
 
       if(n[i-1] < 0){
