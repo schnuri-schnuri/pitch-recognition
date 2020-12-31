@@ -1,6 +1,11 @@
 "use strict";
 import * as Tone from 'tone'; //todo remove
-const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+const ua = navigator.userAgent.toLowerCase();
+if (ua.indexOf('safari') !== -1 && ua.indexOf('chrome') === -1) {
+  window.alert("This site does not work on Safari, because some needed parts of the Web Audio API are not implemented in Safari.")
+}
+  const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
 let audioCtx;
 let started = false;
