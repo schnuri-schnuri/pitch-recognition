@@ -54,7 +54,9 @@
       <workItem from="1609153697202" duration="3090000" />
       <workItem from="1609241314681" duration="1654000" />
       <workItem from="1609253881648" duration="5496000" />
-      <workItem from="1609422431334" duration="599000" />
+      <workItem from="1609422431334" duration="860000" />
+      <workItem from="1609579812940" duration="1052000" />
+      <workItem from="1609593117388" duration="809000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <created>1608564022808</created>
@@ -98,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609422758342</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="added non-compatibility note for safari">
+      <created>1609423425130</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1609423425130</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -109,18 +118,19 @@
     <MESSAGE value="working ac (incl some ideas)" />
     <MESSAGE value="before refactoring" />
     <MESSAGE value="ui update" />
-    <option name="LAST_COMMIT_MESSAGE" value="ui update" />
+    <MESSAGE value="added non-compatibility note for safari" />
+    <option name="LAST_COMMIT_MESSAGE" value="added non-compatibility note for safari" />
   </component>
   <component name="WindowStateProjectService">
     <state x="458" y="215" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1607201442418">
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state x="458" y="215" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/-2560.-645.2560.1417/0.23.1440.877@0.23.1440.877" timestamp="1607201442418" />
-    <state x="190" y="298" key="CommitChangelistDialog2" timestamp="1609422758070">
-      <screen x="0" y="0" width="2560" height="1440" />
+    <state x="190" y="298" key="CommitChangelistDialog2" timestamp="1609423424789">
+      <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state x="190" y="298" key="CommitChangelistDialog2/0.0.2560.1440@0.0.2560.1440" timestamp="1609422758070" />
-    <state x="190" y="316" key="CommitChangelistDialog2/0.23.2560.1417@0.23.2560.1417" timestamp="1609245019352" />
+    <state x="190" y="298" key="CommitChangelistDialog2/0.23.2560.1417@0.23.2560.1417" timestamp="1609423424789" />
     <state x="0" y="136" key="DiffContextDialog" timestamp="1609422752787">
       <screen x="0" y="0" width="2560" height="1440" />
     </state>
@@ -141,11 +151,11 @@
       <screen x="0" y="23" width="1440" height="877" />
     </state>
     <state width="1419" height="231" key="GridCell.Tab.0.right/-2560.-645.2560.1417/0.23.1440.877@0.23.1440.877" timestamp="1607204175602" />
-    <state x="641" y="494" key="Vcs.Push.Dialog.v2" timestamp="1609422763982">
-      <screen x="0" y="0" width="2560" height="1440" />
+    <state x="641" y="509" key="Vcs.Push.Dialog.v2" timestamp="1609423463440">
+      <screen x="0" y="23" width="2560" height="1417" />
     </state>
     <state x="641" y="494" key="Vcs.Push.Dialog.v2/0.0.2560.1440@0.0.2560.1440" timestamp="1609422763982" />
-    <state x="641" y="509" key="Vcs.Push.Dialog.v2/0.23.2560.1417@0.23.2560.1417" timestamp="1609245151767" />
+    <state x="641" y="509" key="Vcs.Push.Dialog.v2/0.23.2560.1417@0.23.2560.1417" timestamp="1609423463440" />
     <state width="600" height="428" key="javadoc.popup" timestamp="1609260044079">
       <screen x="0" y="0" width="2560" height="1440" />
     </state>

@@ -136,7 +136,7 @@ class AutoCorrelator {
     this.analyser.minDecibels = -90;
     this.analyser.maxDecibels = -10;
     this.analyser.smoothingTimeConstant = 0.85;
-    this.analyser.fftSize = 2048;
+    this.analyser.fftSize = 1024;
     this.binWidth = audioCtx.sampleRate / this.analyser.frequencyBinCount;
 
     this.source.connect(this.analyser);
@@ -146,7 +146,7 @@ class AutoCorrelator {
   }
 
   perform() {
-    const arrayLen = this.analyser.frequencyBinCount;
+    const arrayLen = this.analyser.fftSize;
     const W = arrayLen;
     const t = 0;
 
